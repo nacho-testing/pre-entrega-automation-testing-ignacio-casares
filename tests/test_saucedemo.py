@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from utils.helpers import get_driver
+from utils.helpers import get_driver, login
 
 URL = 'https://www.saucedemo.com/'
 USERNAME = 'standard_user'
@@ -20,24 +20,30 @@ def driver():
     driver.quit()
 
 def test_login(driver):
-    driver.get(URL)
-    
-    # Verifica título de la página
-    assert driver.title == 'Swag Labs'
+        login(driver)
 
-    print('Se ingresó correctamente a la página {} con el título esperado: {}', URL, 'Swag Labs')
-
-    # Espera a que se cargue el formulario de login
-    WebDriverWait(driver, 10).until(
-                EC.visibility_of_element_located((By.ID, "user-name"))
+        # Verificar que el login fue exitoso comprobando que estamos en la página de productos
+        WebDriverWait(driver, 8).until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "inventory_item"))
             )
 
-    # Verifica y completa los campos de login y hace clic en el botón de iniciar sesión, verificando que cada elemento exista
-    assert driver.find_element(By.ID, "user-name"), "No se encontró el campo de usuario"
-    driver.find_element(By.ID, "user-name").send_keys(USERNAME)
-    assert driver.find_element(By.ID, "password"), "No se encontró el campo de contraseña"
-    driver.find_element(By.ID, "password").send_keys(PASSWORD)
-    assert driver.find_element(By.ID, "login-button"), "No se encontró el botón de login"
-    driver.find_element(By.ID, "login-button").click()
+        # Verifica que estamos en el inventario
+        assert '/inventory.html' in driver.current_url, "No se redirigió a la página de inventario después del login"
 
-    print("Se completaron correctamente los campos de login y se hizo clic en el botón.")
+        # Verifica que exista el elemento del título y que su texto sea 'Swag Labs'
+        titulo = driver.find_element(By.CLASS_NAME, "app_logo")
+        assert titulo, "No se encontró el elemento con clase 'app_logo'"
+        assert titulo.text == "Swag Labs", f"Texto inesperado en logo: se esperaba 'Swag Labs' pero se obtuvo '{titulo.text}'"
+
+        # Verifica título de sección
+        seccion = driver.find_element(By.CSS_SELECTOR, 'div.header_secondary_container .title').text
+        assert seccion == 'Products', f"Título inesperado: se esperaba 'Products' pero se obtuvo '{seccion}'"
+
+        print('Login completado correctamente y se ingresó a la página de inventario.')
+
+def test_catalogo(driver):
+    login(driver)
+
+    # Verifica título de sección
+    titulo = driver.find_element(By.CSS_SELECTOR, 'div.header_secondary_container .title').text
+    assert titulo == 'Products', f"Título inesperado: se esperaba 'Products' pero se obtuvo '{titulo}'"
