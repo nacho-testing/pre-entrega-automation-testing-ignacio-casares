@@ -24,7 +24,7 @@ El objetivo es automatizar los flujos en la página SauceDemo y garantizar que l
 2. Descarga el WebDriver correspondiente a tu navegador: [selenium.dev](https://www.selenium.dev/)
 3. Clona este repositorio:
    ```bash
-   git clone TODO
+   git clone https://github.com/nacho-testing/pre-entrega-automation-testing-ignacio-casares.git
 4. Instala las dependencias:
    ```bash
     pip install selenium pytest pytest-html
@@ -44,4 +44,4 @@ El objetivo es automatizar los flujos en la página SauceDemo y garantizar que l
     pytest tests/test_saucedemo.py -v --html=./reports/reporte.html
 
 ## Autor
-**Autor**: NACHO
+**Autor**: Ignacio Casares
